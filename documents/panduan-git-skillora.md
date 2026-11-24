@@ -91,7 +91,7 @@ Setelah selesai melakukan `git push`:
 
 ---
 
-## 5. Sinkronisasi Jika Ada Perubahan dari Rekan Tim
+## 5. Sinkronisasi Jika Ada Perubahan dari Rekan Tim (di jalankan hanya kalau ada bentrok saat push)
 
 Jika rekan developer lain baru saja menggabungkan fiturnya ke `dev` saat Anda masih mengerjakan branch fitur Anda, tarik pembaruan tersebut agar tidak terjadi *merge conflict* besar di akhir:
 
@@ -102,3 +102,25 @@ git checkout fitur-nama-tugas
 git merge dev
 ```
 *(Jika muncul konflik file, selesaikan bagian kode yang bertabrakan di editor seperti VS Code, lalu lakukan `git add .` dan `git commit -m "chore: resolve merge conflict"`).*
+
+## 6. Pengajuan Pull Request (PR) untuk QC
+
+Setelah selesai melakukan `git push` ke branch fitur masing-masing, **developer wajib mengajukan Pull Request (PR)** agar hasil kerja dapat diperiksa (*review*) oleh Product Lead & QC sebelum digabungkan.
+
+### A. Cara Membuat Pull Request (Dilakukan oleh Developer)
+1. Buka halaman repositori **Siillora** di browser (`https://github.com/SkilloraTeam/Siillora`).
+2. **Cara Cepat:** Klik tombol hijau **Compare & pull request** pada spanduk notifikasi kuning yang muncul di bagian atas halaman.
+   * **Cara Manual (jika spanduk tidak muncul):** Klik tab **Pull requests** di menu atas > klik tombol hijau **New pull request**.
+3. **Pastikan arah panah penggabungan sudah benar:**
+   * **Base:** `dev` *(branch tujuan tempat kode akan digabungkan)*
+   * **Compare:** `fitur-nama-tugas` *(branch kerja Anda yang baru di-push)*
+   * *(Pastikan panah mengarah dari `fitur-nama-tugas` menuju `dev`, jangan terbalik dan jangan langsung ke `main`).
+4. Gulir ke bawah untuk memastikan daftar file yang berubah sudah sesuai, lalu klik tombol **Create pull request**.
+5. Isi **Judul PR** dengan jelas (contoh: `feat: membuat halaman landing page`) dan tuliskan **Deskripsi singkat** mengenai fitur yang dikerjakan atau catatan pengujian.
+6. Klik tombol **Create pull request** sekali lagi untuk mengirim pengajuan, lalu kabari Product Lead / QC (`nazrilka`) di grup tim.
+
+### B. Proses Review & ACC (Dilakukan oleh Product Lead / QC)
+1. Product Lead / QC membuka tab **Pull requests** dan memilih PR yang masuk.
+2. Mengecek perubahan kode pada tab **Files changed** dan menguji fitur secara fungsional.
+3. **Jika ada revisi:** QC memberikan komentar pada bagian terkait, developer memperbaiki kode di branch fitur yang sama lalu `git push` ulang (PR akan ter-update otomatis).
+4. **Jika lolos QC:** QC menekan **Review changes > Approve**, lalu menekan **Merge pull request** agar kode resmi masuk ke branch `dev`.
