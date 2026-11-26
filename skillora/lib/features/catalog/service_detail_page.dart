@@ -7,6 +7,9 @@ import '../../core/utils/format.dart';
 import '../../core/widgets/app_buttons.dart';
 import '../../core/widgets/auth_header.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/navigation/shell_bus.dart';
+import '../favorites/favorites_store.dart';
+import '../order/order_form_page.dart';
 import 'portfolio_preview_page.dart';
 import 'service_model.dart';
 
@@ -14,13 +17,6 @@ class ServiceDetailPage extends StatelessWidget {
   const ServiceDetailPage({super.key, required this.service});
 
   final Service service;
-
-  void _soon(BuildContext context, String what) {
-    // TODO: sambungkan ke halaman $what.
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text('Halaman $what belum dibuat.')));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +86,11 @@ class ServiceDetailPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 18),
                     Pressable(
-                      onTap: () => _soon(context, 'chat'),
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true)
+                            .popUntil((r) => r.isFirst);
+                        ShellBus.requestChat(service.seller);
+                      },
                       scale: 0.98,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -130,16 +130,30 @@ class ServiceDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Harga mulai', style: AppText.subtitle),
-                  const SizedBox(height: 2),
-                  Text(
-                    formatRupiah(service.price),
-                    style: AppText.title.copyWith(fontSize: 22),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Harga mulai', style: AppText.subtitle),
+                            const SizedBox(height: 2),
+                            Text(
+                              formatRupiah(service.price),
+                              style: AppText.title.copyWith(fontSize: 22),
+                            ),
+                          ],
+                        ),
+                      ),
+                      _FavoriteButton(serviceId: service.id),
+                    ],
                   ),
                   const SizedBox(height: 12),
                   PrimaryButton(
                     label: 'PESAN JASA',
-                    onPressed: () => _soon(context, 'pemesanan'),
+                    onPressed: () => Navigator.of(context, rootNavigator: true).push(
+                      appRoute(OrderFormPage(service: service)),
+                    ),
                   ),
                 ],
               ),
@@ -263,6 +277,50 @@ class _PortfolioFile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Hati di samping harga. Mengisi dengan sedikit membal saat ditandai.
+class _FavoriteButton extends StatelessWidget {
+  const _FavoriteButton({required this.serviceId});
+
+  final String serviceId;
+
+  @override
+  Widget build(BuildContext context) {
+    final store = FavoritesStore.instance;
+    return ListenableBuilder(
+      listenable: store,
+      builder: (context, _) {
+        final on = store.contains(serviceId);
+        return Semantics(
+          button: true,
+          toggled: on,
+          label: on ? 'Hapus dari favorit' : 'Simpan ke favorit',
+          child: Pressable(
+            onTap: () => store.toggle(serviceId),
+            scale: 0.9,
+            child: SizedBox(
+              width: 44,
+              height: 44,
+              child: Center(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 220),
+                  switchInCurve: Curves.easeOutBack,
+                  transitionBuilder: (c, a) => ScaleTransition(scale: a, child: c),
+                  child: Icon(
+                    on ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                    key: ValueKey(on),
+                    size: 26,
+                    color: on ? AppColors.navyDeep : AppColors.textMuted,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

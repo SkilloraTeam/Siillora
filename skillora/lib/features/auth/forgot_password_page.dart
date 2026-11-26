@@ -95,7 +95,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                   duration: const Duration(milliseconds: 260),
                   layoutBuilder: (current, previous) => Stack(
                     alignment: Alignment.topLeft,
-                    children: [...previous, if (current != null) current],
+                    children: [...previous, ?current],
                   ),
                   child: _sent
                       ? _Copy(

@@ -103,7 +103,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                           key: ValueKey('$query|${_options.hashCode}'),
                           padding: const EdgeInsets.only(bottom: 20),
                           itemCount: results.length,
-                          separatorBuilder: (_, __) => const SizedBox(height: 10),
+                          separatorBuilder: (_, _) => const SizedBox(height: 10),
                           itemBuilder: (context, i) => ServiceCard(
                             service: results[i],
                             showTagline: true,

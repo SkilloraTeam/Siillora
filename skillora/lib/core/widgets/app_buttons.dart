@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_text.dart';
+import 'pressable.dart';
 
 /// Tombol utama navy. Mengecil sedikit saat ditekan, label berganti
 /// spinner saat [loading], dan memudar saat [onPressed] null.
@@ -177,6 +178,48 @@ class BackPill extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Tombol sekunder: kartu terang, teks navy. Dipakai berdampingan dengan
+/// [PrimaryButton] untuk aksi yang tidak utama, mis. "EDIT PESANAN".
+class SecondaryButton extends StatelessWidget {
+  const SecondaryButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.tonal = false,
+  });
+
+  final String label;
+  final VoidCallback? onPressed;
+
+  /// true: isi biru muda tanpa garis (gaya "AJUKAN REVISI").
+  final bool tonal;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: onPressed == null ? 0.45 : 1,
+      duration: const Duration(milliseconds: 200),
+      child: Pressable(
+        onTap: onPressed,
+        scale: 0.98,
+        child: Container(
+          height: 50,
+          width: double.infinity,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: tonal ? AppColors.mist : AppColors.card,
+            borderRadius: BorderRadius.circular(12),
+            border: tonal
+                ? null
+                : Border.all(color: AppColors.fieldBorder.withValues(alpha: 0.6)),
+          ),
+          child: Text(label, style: AppText.button.copyWith(color: AppColors.navyDeep)),
         ),
       ),
     );

@@ -17,6 +17,9 @@ class AppTextField extends StatefulWidget {
     this.autofillHints,
     this.isPassword = false,
     this.fillColor = AppColors.card,
+    this.minLines,
+    this.maxLines = 1,
+    this.helper,
   });
 
   final String label;
@@ -29,6 +32,13 @@ class AppTextField extends StatefulWidget {
   final Iterable<String>? autofillHints;
   final bool isPassword;
   final Color fillColor;
+
+  /// Untuk kolom teks panjang (deskripsi). Biarkan default untuk satu baris.
+  final int? minLines;
+  final int maxLines;
+
+  /// Teks bantu kecil di bawah kolom, mis. contoh isian.
+  final String? helper;
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();
@@ -88,8 +98,15 @@ class _AppTextFieldState extends State<AppTextField> {
                       controller: widget.controller,
                       focusNode: _focus,
                       obscureText: widget.isPassword && _hidden,
-                      keyboardType: widget.keyboardType,
-                      textInputAction: widget.textInputAction,
+                      minLines: widget.minLines,
+                      maxLines: widget.isPassword ? 1 : widget.maxLines,
+                      keyboardType: widget.keyboardType ??
+                          (widget.maxLines != 1 ? TextInputType.multiline : null),
+                      textCapitalization: widget.maxLines != 1
+                          ? TextCapitalization.sentences
+                          : TextCapitalization.none,
+                      textInputAction: widget.textInputAction ??
+                          (widget.maxLines != 1 ? TextInputAction.newline : null),
                       autofillHints: widget.autofillHints,
                       onSubmitted: widget.onSubmitted,
                       onChanged: state.didChange,
@@ -129,6 +146,11 @@ class _AppTextFieldState extends State<AppTextField> {
                 ],
               ),
             ),
+            if (widget.helper != null && !hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Text(widget.helper!, style: AppText.subtitle),
+              ),
             AnimatedSize(
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeOut,

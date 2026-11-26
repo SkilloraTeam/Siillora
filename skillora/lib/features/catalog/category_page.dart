@@ -62,7 +62,7 @@ class _CategoryPageState extends State<CategoryPage> {
                   : ListView.separated(
                       padding: const EdgeInsets.only(bottom: 20),
                       itemCount: items.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 10),
+                      separatorBuilder: (_, _) => const SizedBox(height: 10),
                       itemBuilder: (context, i) => _CategoryRow(
                         category: items[i],
                         onTap: () => Navigator.of(context).push(
